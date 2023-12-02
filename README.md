@@ -1,2 +1,2 @@
 # chatbot
-Chatbot project with python
+Chatbot project made with python
