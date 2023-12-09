@@ -41,13 +41,50 @@ words = sorted(list(set(words)))
 # sort classes
 classes = sorted(list(set(classes)))
 
+"""
 # documents = combination between patterns and intents
-print (len(documents), "documents")
+print(len(documents), "documents")
 
 # classes = intents
-print (len(classes), "classes", classes)
+print(len(classes), "classes", classes)
 
 # words = all words, vocabulary
-print (len(words), "unique lemmatized words", words)
+print(len(words), "unique lemmatized words", words)
+"""
 
 pickle.dump(words, open('words.pkl', 'wb')) # wb = write binary
+
+#* create training and testing data
+# create training data
+training = []
+
+# create empty array for the output
+output_empty = [0] * len(classes)
+
+# training set
+for doc in documents:
+    # initialize bag of words
+    bag = []
+
+    # list of tokenized words for pattern
+    word_patterns = doc[0]
+
+    # lemmatize each word
+    word_patterns = [lemmatizer.lemmatize(word.lower()) for word in word_patterns]
+
+    # create bag of words array w 1, if word is found in current pattern
+    for word in words:
+        bag.append(1) if word in word_patterns else bag.append(0)
+
+    # output is 0 for each tag & 1 for current tag
+    output_row = list(output_empty)
+    output_row[classes.index(doc[1])] = 1
+    training.append([bag, output_row])
+
+# shuffle the features & make numpy array
+random.shuffle(training)
+training = np.array(training)
+
+# create training and testing lists: x = patterns, y = intents
+train_x = list(training[:,0])
+train_y = list(training[:,1])
